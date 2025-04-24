@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+    <title>Shop - Denim by Desewa</title>
+    <meta name="description" content="Shop our premium collection of denim clothing and accessories at Denim by Desewa.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  </head>
+  <body>
+    <header class="header">
+      <div class="container">
+        <div class="header-content">
+          <a href="/" class="logo">Denim<span class="logo-highlight">by</span>Desewa</a>
+          
+          <nav class="main-nav">
+            <ul class="nav-list">
+              <li><a href="/" class="nav-link">Home</a></li>
+              <li><a href="shop.html" class="nav-link active">Shop</a></li>
+              <li><a href="new-arrivals.html" class="nav-link">New Arrivals</a></li>
+            </ul>
+          </nav>
+          
+          <div class="header-actions">
+            <button class="icon-button" id="search-btn">
+              <i class="fas fa-search"></i>
+            </button>
+            <a href="auth.html" class="icon-button">
+              <i class="fas fa-user"></i>
+            </a>
+            <button class="icon-button cart-btn" id="cart-btn">
+              <i class="fas fa-shopping-cart"></i>
+              <span class="cart-count" id="cart-count">0</span>
+            </button>
+            <button class="mobile-menu-toggle" id="mobile-menu-toggle">
+              <i class="fas fa-bars"></i>
+            </button>
+          </div>
+        </div>
+        
+        <!-- Mobile menu -->
+        <div class="mobile-menu" id="mobile-menu">
+          <ul class="mobile-nav-list">
+            <li><a href="/" class="mobile-nav-link">Home</a></li>
+            <li><a href="shop.html" class="mobile-nav-link active">Shop</a></li>
+            <li><a href="new-arrivals.html" class="mobile-nav-link">New Arrivals</a></li>
+          </ul>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <div class="container">
+        <div class="shop-header">
+          <h1 class="page-title">Shop Our Collection</h1>
+        </div>
+        
+        <div class="shop-content">
+          <!-- Filters Sidebar -->
+          <aside class="shop-filters">
+            <div class="filter-section">
+              <h3 class="filter-title">Categories</h3>
+              <div class="filter-options" id="category-filters">
+                <div class="filter-option">
+                  <input type="checkbox" id="category-jackets" name="category" value="jackets">
+                  <label for="category-jackets">Jackets</label>
+                </div>
+                <div class="filter-option">
+                  <input type="checkbox" id="category-jeans" name="category" value="jeans">
+                  <label for="category-jeans">Jeans</label>
+                </div>
+                <div class="filter-option">
+                  <input type="checkbox" id="category-shirts" name="category" value="shirts">
+                  <label for="category-shirts">Shirts</label>
+                </div>
+                <div class="filter-option">
+                  <input type="checkbox" id="category-skirts" name="category" value="skirts">
+                  <label for="category-skirts">Skirts</label>
+                </div>
+                <div class="filter-option">
+                  <input type="checkbox" id="category-accessories" name="category" value="accessories">
+                  <label for="category-accessories">Accessories</label>
+                </div>
+              </div>
+            </div>
+            
+            <div class="filter-divider"></div>
+            
+            <div class="filter-section">
+              <h3 class="filter-title">Price Range</h3>
+              <div class="filter-options" id="price-filters">
+                <div class="filter-option">
+                  <input type="radio" id="price-under50" name="price" value="under50">
+                  <label for="price-under50">Under $50</label>
+                </div>
+                <div class="filter-option">
+                  <input type="radio" id="price-50-100" name="price" value="50-100">
+                  <label for="price-50-100">$50 - $100</label>
+                </div>
+                <div class="filter-option">
+                  <input type="radio" id="price-100-150" name="price" value="100-150">
+                  <label for="price-100-150">$100 - $150</label>
+                </div>
+                <div class="filter-option">
+                  <input type="radio" id="price-over150" name="price" value="over150">
+                  <label for="price-over150">Over $150</label>
+                </div>
+              </div>
+            </div>
+            
+            <div class="filter-divider"></div>
+            
+            <div class="filter-section">
+              <h3 class="filter-title">Size</h3>
+              <div class="size-options">
+                <button class="size-btn" data-size="XS">XS</button>
+                <button class="size-btn" data-size="S">S</button>
+                <button class="size-btn" data-size="M">M</button>
+                <button class="size-btn" data-size="L">L</button>
+                <button class="size-btn" data-size="XL">XL</button>
+              </div>
+            </div>
+            
+            <div class="filter-divider"></div>
+            
+            <button class="btn btn-outline clear-filters-btn" id="clear-filters">Clear All Filters</button>
+          </aside>
+          
+          <!-- Product Grid -->
+          <div class="shop-products">
+            <div class="shop-controls">
+              <div class="sort-controls">
+                <label for="sort-by">Sort by:</label>
+                <select id="sort-by" class="sort-select">
+                  <option value="newest">Newest</option>
+                  <option value="price-asc">Price: Low to High</option>
+                  <option value="price-desc">Price: High to Low</option>
+                </select>
+              </div>
+              
+              <div class="display-controls">
+                <label for="display-count">Show:</label>
+                <select id="display-count" class="display-select">
+                  <option value="12">12</option>
+                  <option value="24">24</option>
+                  <option value="36">36</option>
+                </select>
+              </div>
+            </div>
+            
+            <div class="product-grid" id="products-grid">
+              <!-- Products will be loaded here by JavaScript -->
+              <div class="loading">
+                <i class="fas fa-spinner fa-spin"></i>
+              </div>
+            </div>
+            
+            <!-- Pagination -->
+            <div class="pagination" id="pagination">
+              <!-- Pagination will be generated by JavaScript -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Cart Sidebar -->
+    <div class="cart-sidebar" id="cart-sidebar">
+      <div class="cart-header">
+        <h3>Your Cart</h3>
+        <button class="close-cart" id="close-cart">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      
+      <div class="cart-items" id="cart-items">
+        <!-- Cart items will be loaded here -->
+      </div>
+      
+      <div class="cart-empty" id="cart-empty">
+        <i class="fas fa-shopping-bag"></i>
+        <p>Your cart is empty</p>
+        <button class="btn btn-primary" id="continue-shopping">Continue Shopping</button>
+      </div>
+      
+      <div class="cart-footer" id="cart-footer">
+        <div class="cart-totals">
+          <div class="subtotal">
+            <span>Subtotal</span>
+            <span id="cart-subtotal">$0.00</span>
+          </div>
+          <div class="shipping">
+            <span>Shipping</span>
+            <span>Calculated at checkout</span>
+          </div>
+          <div class="total">
+            <span>Total</span>
+            <span id="cart-total">$0.00</span>
+          </div>
+        </div>
+        
+        <button class="btn btn-primary checkout-btn">Checkout</button>
+        
+        <div class="cart-actions">
+          <button class="btn btn-outline" id="continue-shopping-footer">Continue Shopping</button>
+          <button class="btn btn-outline clear-cart" id="clear-cart">Clear Cart</button>
+        </div>
+      </div>
+    </div>
+    
+    <div class="cart-overlay" id="cart-overlay"></div>
+
+    <footer class="footer">
+      <div class="container">
+        <div class="footer-content">
+          <div class="footer-section">
+            <h3 class="footer-title">Denim by Desewa</h3>
+            <p class="footer-text">Premium quality denim clothing and accessories for style-conscious individuals.</p>
+            <div class="social-links">
+              <a href="https://www.instagram.com/denimbydesewa?igsh=dzJ2cnB1dnV0bXk1&utm_source=qr" target="_blank" rel="noopener noreferrer" class="social-link">
+                <i class="fab fa-instagram"></i>
+              </a>
+              <a href="https://www.tiktok.com/@denimbydesewa" target="_blank" rel="noopener noreferrer" class="social-link">
+                <i class="fab fa-tiktok"></i>
+              </a>
+              <a href="https://snapchat.com/t/Uw2Fa3P1" target="_blank" rel="noopener noreferrer" class="social-link">
+                <i class="fab fa-snapchat"></i>
+              </a>
+              <a href="https://wa.me/2349033221858" target="_blank" rel="noopener noreferrer" class="social-link">
+                <i class="fab fa-whatsapp"></i>
+              </a>
+            </div>
+          </div>
+          
+          <div class="footer-section">
+            <h3 class="footer-title">Shop</h3>
+            <ul class="footer-links">
+              <li><a href="shop.html">All Products</a></li>
+              <li><a href="new-arrivals.html">New Arrivals</a></li>
+              <li><a href="shop.html?featured=true">Featured</a></li>
+              <li><a href="shop.html?category=accessories">Accessories</a></li>
+            </ul>
+          </div>
+          
+          <div class="footer-section">
+            <h3 class="footer-title">Customer Service</h3>
+            <ul class="footer-links">
+              <li><a href="contact.html">Contact Us</a></li>
+              <li><a href="shipping.html">Shipping & Returns</a></li>
+              <li><a href="faq.html">FAQ</a></li>
+              <li><a href="size-guide.html">Size Guide</a></li>
+            </ul>
+          </div>
+          
+          <div class="footer-section">
+            <h3 class="footer-title">Contact</h3>
+            <ul class="contact-info">
+              <li>
+                <i class="fas fa-map-marker-alt"></i>
+                <span>Lagos, Nigeria</span>
+              </li>
+              <li>
+                <i class="fas fa-phone"></i>
+                <span>+234 903 322 1858</span>
+              </li>
+              <li>
+                <i class="fas fa-envelope"></i>
+                <span>info@denimbydesewa.com</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+        
+        <div class="footer-bottom">
+          <p>&copy; <span id="current-year">2024</span> Denim by Desewa. All rights reserved.</p>
+          <div class="footer-legal">
+            <a href="privacy.html">Privacy Policy</a>
+            <a href="terms.html">Terms of Service</a>
+            <a href="refund.html">Refund Policy</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script src="js/cart.js"></script>
+    <script src="js/shop.js"></script>
+  </body>
+</html>
