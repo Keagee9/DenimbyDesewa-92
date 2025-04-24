@@ -791,6 +791,39 @@ img {
   color: var(--primary-color);
 }
 
+.page-header {
+  padding: 3rem 0;
+  text-align: center;
+}
+
+.page-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.page-description {
+  max-width: 600px;
+  margin: 0 auto;
+  color: var(--text-light);
+  font-size: 1.125rem;
+}
+
+.product-grid-container {
+  padding: 2rem 0 5rem;
+}
+
+.no-products-message,
+.error-message {
+  text-align: center;
+  padding: 3rem 0;
+  color: var(--text-light);
+}
+
+.mt-4 {
+  margin-top: 1rem;
+}
+
 /* New Arrivals */
 .new-arrivals {
   padding: 4rem 0;
