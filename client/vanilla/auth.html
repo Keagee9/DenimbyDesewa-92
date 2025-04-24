@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+    <title>Login / Register - Denim by Desewa</title>
+    <meta name="description" content="Login or register to access your Denim by Desewa account. Shop premium denim fashion.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  </head>
+  <body>
+    <header class="header">
+      <div class="container">
+        <div class="header-content">
+          <a href="/" class="logo">Denim<span class="logo-highlight">by</span>Desewa</a>
+          
+          <nav class="main-nav">
+            <ul class="nav-list">
+              <li><a href="/" class="nav-link">Home</a></li>
+              <li><a href="shop.html" class="nav-link">Shop</a></li>
+              <li><a href="new-arrivals.html" class="nav-link">New Arrivals</a></li>
+            </ul>
+          </nav>
+          
+          <div class="header-actions">
+            <button class="icon-button" id="search-btn">
+              <i class="fas fa-search"></i>
+            </button>
+            <a href="auth.html" class="icon-button">
+              <i class="fas fa-user"></i>
+            </a>
+            <button class="icon-button cart-btn" id="cart-btn">
+              <i class="fas fa-shopping-cart"></i>
+              <span class="cart-count" id="cart-count">0</span>
+            </button>
+            <button class="mobile-menu-toggle" id="mobile-menu-toggle">
+              <i class="fas fa-bars"></i>
+            </button>
+          </div>
+        </div>
+        
+        <!-- Mobile menu -->
+        <div class="mobile-menu" id="mobile-menu">
+          <ul class="mobile-nav-list">
+            <li><a href="/" class="mobile-nav-link">Home</a></li>
+            <li><a href="shop.html" class="mobile-nav-link">Shop</a></li>
+            <li><a href="new-arrivals.html" class="mobile-nav-link">New Arrivals</a></li>
+          </ul>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <div class="auth-container">
+        <div class="container">
+          <div class="auth-content">
+            <div class="auth-forms">
+              <div class="auth-tabs">
+                <button class="auth-tab active" data-tab="login">Login</button>
+                <button class="auth-tab" data-tab="register">Register</button>
+              </div>
+              
+              <!-- Login Form -->
+              <div class="auth-form-container active" id="login-form">
+                <div class="auth-card">
+                  <div class="auth-card-header">
+                    <h2>Login to Your Account</h2>
+                    <p>Enter your credentials to access your account</p>
+                  </div>
+                  <div class="auth-card-content">
+                    <form id="login-form-element">
+                      <div class="form-group">
+                        <label for="login-username">Username</label>
+                        <input type="text" id="login-username" name="username" placeholder="Enter your username" required>
+                        <div class="error-message" id="login-username-error"></div>
+                      </div>
+                      
+                      <div class="form-group">
+                        <label for="login-password">Password</label>
+                        <input type="password" id="login-password" name="password" placeholder="Enter your password" required>
+                        <div class="error-message" id="login-password-error"></div>
+                      </div>
+                      
+                      <button type="submit" class="btn btn-primary btn-block">
+                        <span class="btn-text">Login</span>
+                        <span class="btn-loader hidden"><i class="fas fa-spinner fa-spin"></i></span>
+                      </button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Register Form -->
+              <div class="auth-form-container" id="register-form">
+                <div class="auth-card">
+                  <div class="auth-card-header">
+                    <h2>Create an Account</h2>
+                    <p>Register to start shopping with us</p>
+                  </div>
+                  <div class="auth-card-content">
+                    <form id="register-form-element">
+                      <div class="form-group">
+                        <label for="register-username">Username</label>
+                        <input type="text" id="register-username" name="username" placeholder="Choose a username" required>
+                        <div class="error-message" id="register-username-error"></div>
+                      </div>
+                      
+                      <div class="form-group">
+                        <label for="register-password">Password</label>
+                        <input type="password" id="register-password" name="password" placeholder="Create a password" required>
+                        <div class="error-message" id="register-password-error"></div>
+                      </div>
+                      
+                      <div class="form-group">
+                        <label for="register-confirm-password">Confirm Password</label>
+                        <input type="password" id="register-confirm-password" name="confirmPassword" placeholder="Confirm your password" required>
+                        <div class="error-message" id="register-confirm-password-error"></div>
+                      </div>
+                      
+                      <button type="submit" class="btn btn-primary btn-block">
+                        <span class="btn-text">Register</span>
+                        <span class="btn-loader hidden"><i class="fas fa-spinner fa-spin"></i></span>
+                      </button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="auth-info">
+              <div class="auth-info-content">
+                <h2>Denim by Desewa</h2>
+                <p>Join our community of fashion enthusiasts and explore our premium collection of denim products. Login or register to unlock exclusive features and manage your shopping experience.</p>
+                
+                <div class="auth-features">
+                  <div class="auth-feature">
+                    <div class="auth-feature-icon">
+                      <i class="fas fa-check"></i>
+                    </div>
+                    <div class="auth-feature-text">
+                      <h3>Easy Shopping</h3>
+                      <p>Browse and purchase our products with ease</p>
+                    </div>
+                  </div>
+                  
+                  <div class="auth-feature">
+                    <div class="auth-feature-icon">
+                      <i class="fas fa-check"></i>
+                    </div>
+                    <div class="auth-feature-text">
+                      <h3>Order Tracking</h3>
+                      <p>Track your orders and view order history</p>
+                    </div>
+                  </div>
+                  
+                  <div class="auth-feature">
+                    <div class="auth-feature-icon">
+                      <i class="fas fa-check"></i>
+                    </div>
+                    <div class="auth-feature-text">
+                      <h3>Exclusive Deals</h3>
+                      <p>Get access to member-only discounts and promotions</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Cart Sidebar -->
+    <div class="cart-sidebar" id="cart-sidebar">
+      <div class="cart-header">
+        <h3>Your Cart</h3>
+        <button class="close-cart" id="close-cart">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      
+      <div class="cart-items" id="cart-items">
+        <!-- Cart items will be loaded here -->
+      </div>
+      
+      <div class="cart-empty" id="cart-empty">
+        <i class="fas fa-shopping-bag"></i>
+        <p>Your cart is empty</p>
+        <button class="btn btn-primary" id="continue-shopping">Continue Shopping</button>
+      </div>
+      
+      <div class="cart-footer" id="cart-footer">
+        <div class="cart-totals">
+          <div class="subtotal">
+            <span>Subtotal</span>
+            <span id="cart-subtotal">$0.00</span>
+          </div>
+          <div class="shipping">
+            <span>Shipping</span>
+            <span>Calculated at checkout</span>
+          </div>
+          <div class="total">
+            <span>Total</span>
+            <span id="cart-total">$0.00</span>
+          </div>
+        </div>
+        
+        <button class="btn btn-primary checkout-btn">Checkout</button>
+        
+        <div class="cart-actions">
+          <button class="btn btn-outline" id="continue-shopping-footer">Continue Shopping</button>
+          <button class="btn btn-outline clear-cart" id="clear-cart">Clear Cart</button>
+        </div>
+      </div>
+    </div>
+    
+    <div class="cart-overlay" id="cart-overlay"></div>
+
+    <footer class="footer">
+      <div class="container">
+        <div class="footer-content">
+          <div class="footer-section">
+            <h3 class="footer-title">Denim by Desewa</h3>
+            <p class="footer-text">Premium quality denim clothing and accessories for style-conscious individuals.</p>
+            <div class="social-links">
+              <a href="https://www.instagram.com/denimbydesewa?igsh=dzJ2cnB1dnV0bXk1&utm_source=qr" target="_blank" rel="noopener noreferrer" class="social-link">
+                <i class="fab fa-instagram"></i>
+              </a>
+              <a href="https://www.tiktok.com/@denimbydesewa" target="_blank" rel="noopener noreferrer" class="social-link">
+                <i class="fab fa-tiktok"></i>
+              </a>
+              <a href="https://snapchat.com/t/Uw2Fa3P1" target="_blank" rel="noopener noreferrer" class="social-link">
+                <i class="fab fa-snapchat"></i>
+              </a>
+              <a href="https://wa.me/2349033221858" target="_blank" rel="noopener noreferrer" class="social-link">
+                <i class="fab fa-whatsapp"></i>
+              </a>
+            </div>
+          </div>
+          
+          <div class="footer-section">
+            <h3 class="footer-title">Shop</h3>
+            <ul class="footer-links">
+              <li><a href="shop.html">All Products</a></li>
+              <li><a href="new-arrivals.html">New Arrivals</a></li>
+              <li><a href="shop.html?featured=true">Featured</a></li>
+              <li><a href="shop.html?category=accessories">Accessories</a></li>
+            </ul>
+          </div>
+          
+          <div class="footer-section">
+            <h3 class="footer-title">Customer Service</h3>
+            <ul class="footer-links">
+              <li><a href="contact.html">Contact Us</a></li>
+              <li><a href="shipping.html">Shipping & Returns</a></li>
+              <li><a href="faq.html">FAQ</a></li>
+              <li><a href="size-guide.html">Size Guide</a></li>
+            </ul>
+          </div>
+          
+          <div class="footer-section">
+            <h3 class="footer-title">Contact</h3>
+            <ul class="contact-info">
+              <li>
+                <i class="fas fa-map-marker-alt"></i>
+                <span>Lagos, Nigeria</span>
+              </li>
+              <li>
+                <i class="fas fa-phone"></i>
+                <span>+234 903 322 1858</span>
+              </li>
+              <li>
+                <i class="fas fa-envelope"></i>
+                <span>info@denimbydesewa.com</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+        
+        <div class="footer-bottom">
+          <p>&copy; <span id="current-year">2024</span> Denim by Desewa. All rights reserved.</p>
+          <div class="footer-legal">
+            <a href="privacy.html">Privacy Policy</a>
+            <a href="terms.html">Terms of Service</a>
+            <a href="refund.html">Refund Policy</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script src="js/cart.js"></script>
+    <script src="js/auth.js"></script>
+  </body>
+</html>
