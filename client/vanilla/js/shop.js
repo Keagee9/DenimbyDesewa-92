@@ -94,13 +94,13 @@ const ShopState = {
         
         switch (price) {
           case 'under50':
-            return productPrice < 50;
+            return productPrice < 5000;
           case '50-100':
-            return productPrice >= 50 && productPrice <= 100;
+            return productPrice >= 5000 && productPrice <= 10000;
           case '100-150':
-            return productPrice >= 100 && productPrice <= 150;
+            return productPrice >= 10000 && productPrice <= 15000;
           case 'over150':
-            return productPrice > 150;
+            return productPrice > 15000;
           default:
             return true;
         }

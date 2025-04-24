@@ -307,9 +307,9 @@ document.addEventListener('DOMContentLoaded', () => {
   setActiveNavLinks();
 });
 
-// Format currency
+// Format currency to Naira
 function formatCurrency(amount) {
-  return '$' + amount.toFixed(2);
+  return '₦' + amount.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
 // Export to make available to other scripts
