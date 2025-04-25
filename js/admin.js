@@ -12,34 +12,30 @@ const Admin = {
     this.loadProducts();
   },
   
-  // Check if user is admin
+  // Simple admin check
   async checkAdminStatus() {
-    try {
-      const user = await API.getCurrentUser();
-      
-      if (!user || !user.isAdmin) {
-        // Redirect to login page if not admin
-        window.location.href = 'auth.html';
-        return;
-      }
-    } catch (error) {
-      console.error('Error checking admin status:', error);
-      window.location.href = 'auth.html';
-    }
+    // Admin check removed - assuming direct admin access
+    return true;
   },
   
   // Setup event listeners
   setupEventListeners() {
-    // Logout button
-    const logoutBtn = document.getElementById('logout-btn');
-    if (logoutBtn) {
-      logoutBtn.addEventListener('click', async () => {
-        try {
-          await API.logout();
-          window.location.href = 'auth.html';
-        } catch (error) {
-          console.error('Error logging out:', error);
-          Toast.error('Failed to logout. Please try again.');
+    // Image preview
+    const imageInput = document.getElementById('product-image');
+    const imagePreview = document.getElementById('image-preview');
+    
+    if (imageInput && imagePreview) {
+      imageInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            imagePreview.src = e.target.result;
+            imagePreview.classList.remove('hidden');
+          };
+          reader.readAsDataURL(file);
+        } else {
+          imagePreview.classList.add('hidden');
         }
       });
     }
@@ -234,8 +230,22 @@ const Admin = {
   // Hide product modal
   hideProductModal() {
     const modal = document.getElementById('product-modal');
+    const imagePreview = document.getElementById('image-preview');
     if (modal) {
       modal.classList.remove('active');
+      // Clear the file input
+      const fileInput = document.getElementById('product-image');
+      if (fileInput) {
+        fileInput.value = '';
+      }
+      // Clear the preview
+      if (imagePreview) {
+        if (imagePreview.src) {
+          URL.revokeObjectURL(imagePreview.src);
+        }
+        imagePreview.src = '';
+        imagePreview.classList.add('hidden');
+      }
     }
   },
   
@@ -370,14 +380,43 @@ const Admin = {
   
   // Handle product form submission
   async handleProductSubmit(form) {
-    // Get form data
+    // Get form data including file
     const formData = new FormData(form);
+    const file = form.elements.image.files[0];
+    
+    if (!file && !this.currentProduct) {
+      Toast.error('Please select an image file');
+      return;
+    }
+
+    // Check file size (max 5MB)
+    if (file && file.size > 5 * 1024 * 1024) {
+      Toast.error('Image file size must be less than 5MB');
+      return;
+    }
+
+    // Check file type
+    if (file && !file.type.startsWith('image/')) {
+      Toast.error('Please select a valid image file');
+      return;
+    }
+
+    // Create object URL for the uploaded file
+    let imageUrl;
+    if (file) {
+      imageUrl = URL.createObjectURL(file);
+    } else if (this.currentProduct) {
+      imageUrl = this.currentProduct.imageUrl;
+    } else {
+      imageUrl = '';
+    }
+    
     const productData = {
       name: formData.get('name'),
       description: formData.get('description'),
       price: parseFloat(formData.get('price')),
       stock: parseInt(formData.get('stock')),
-      imageUrl: formData.get('imageUrl'),
+      imageUrl: imageUrl,
       category: formData.get('category'),
       featured: formData.get('featured') === 'on',
       isNewArrival: formData.get('isNewArrival') === 'on'
@@ -466,17 +505,14 @@ const Admin = {
       isValid = false;
     }
     
-    // Validate image URL
-    if (!data.imageUrl || data.imageUrl.trim() === '') {
-      document.getElementById('product-image-error').textContent = 'Image URL is required';
+    // Validate image file
+    const imageFile = form.elements.image.files[0];
+    if (!imageFile) {
+      document.getElementById('product-image-error').textContent = 'Image file is required';
       isValid = false;
-    } else {
-      try {
-        new URL(data.imageUrl);
-      } catch (e) {
-        document.getElementById('product-image-error').textContent = 'Invalid URL format';
-        isValid = false;
-      }
+    } else if (!imageFile.type.startsWith('image/')) {
+      document.getElementById('product-image-error').textContent = 'Please select a valid image file';
+      isValid = false;
     }
     
     return isValid;

@@ -235,6 +235,7 @@
 
 .product-table-wrapper {
   overflow-x: auto;
+  margin-bottom: 2rem;
 }
 
 .product-table {
@@ -685,7 +686,7 @@ img {
   left: 0;
   width: 100%;
   height: 100%;
-  background-image: url('https://images.unsplash.com/photo-1441984904996-e0b6ba687e04');
+  background-image: url('https://i.pinimg.com/736x/0c/6c/e1/0c6ce1dac7d09aa68612265666db669b.jpg');
   background-size: cover;
   background-position: center;
   opacity: 0.6;
@@ -789,6 +790,31 @@ img {
 
 .category-link:hover {
   color: var(--primary-color);
+}
+
+.category-desc {
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 0.5rem;
+}
+
+/* Wholesale Section */
+.wholesale-section {
+  padding: 4rem 0;
+  background-color: #f0f4f8;
+  text-align: center;
+}
+
+.wholesale-content {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.wholesale-text {
+  margin: 0 auto 2rem;
+  max-width: 600px;
+  font-size: 1.125rem;
+  color: var(--text-light);
 }
 
 .page-header {
@@ -1223,8 +1249,7 @@ img {
 
 .social-link {
   display: flex;
-  align-items: center;
-  justify-content: center;
+  align-items: center;justify-content: center;
   width: 2.5rem;
   height: 2.5rem;
   border-radius: 50%;
@@ -1298,11 +1323,11 @@ img {
   .product-grid {
     grid-template-columns: repeat(2, 1fr);
   }
-  
+
   .newsletter-form {
     flex-direction: row;
   }
-  
+
   .newsletter-form button {
     width: auto;
   }
@@ -1312,21 +1337,21 @@ img {
   .hero-title {
     font-size: 3rem;
   }
-  
+
   .category-grid {
     grid-template-columns: repeat(2, 1fr);
   }
-  
+
   .footer-content {
     grid-template-columns: repeat(2, 1fr);
   }
-  
+
   .footer-bottom {
     flex-direction: row;
     justify-content: space-between;
     text-align: left;
   }
-  
+
   .footer-bottom p {
     margin-bottom: 0;
   }
@@ -1336,24 +1361,40 @@ img {
   .main-nav {
     display: block;
   }
-  
+
   .mobile-menu-toggle {
     display: none;
   }
-  
+
   .hero {
     padding: 8rem 0;
   }
-  
+
   .category-grid {
     grid-template-columns: repeat(3, 1fr);
   }
-  
+
   .product-grid {
     grid-template-columns: repeat(4, 1fr);
   }
-  
+
   .footer-content {
     grid-template-columns: repeat(4, 1fr);
   }
+}
+
+.image-preview-container {
+  margin: 10px 0;
+  text-align: center;
+}
+
+#image-preview {
+  max-width: 200px;
+  max-height: 200px;
+  border-radius: 4px;
+  margin-bottom: 10px;
+}
+
+#image-preview.hidden {
+  display: none;
 }
