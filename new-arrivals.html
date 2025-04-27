@@ -52,25 +52,97 @@
         </div>
       </div>
     </header>
-
-    <main>
-      <div class="container">
-        <div class="page-header">
-          <h1 class="page-title">New Arrivals</h1>
-          <p class="page-description">Check out our latest additions to the collection.</p>
-        </div>
-        
-        <div class="product-grid-container">
-          <div class="product-grid" id="new-arrivals-grid">
-            <!-- Products will be loaded here by JavaScript -->
-            <div class="loading">
-              <i class="fas fa-spinner fa-spin"></i>
-            </div>
-          </div>
-        </div>
-      </div>
-    </main>
-
+    <!-- ===== Main Content ===== -->
+        <!-- ===== Main Content ===== -->
+        <main>
+          <section class="products-section">
+              <div class="container">
+                  <h1 class="page-title" style="text-align: center; margin-bottom: 2rem;">New Arrivals</h1>
+    
+                  <div class="product-grid" id="new-arrivals-list">
+    
+                      <!-- Product 1: Stock Baggy Jeans -->
+                      <div class="product-card" data-product-id="na-bgj001" data-product-name="Stock Baggy Jeans" data-product-price="25000.00" data-product-image="https://images.pexels.com/photos/10816045/pexels-photo-10816045.jpeg?auto=compress&cs=tinysrgb&w=600">
+                          <div class="product-image">
+                              <!-- Updated Image URL -->
+                              <img src="https://images.unsplash.com/photo-1604176354204-9268737828e4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8YmFnZ3klMjBqZWFuc3xlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=500&q=60" alt="Model wearing light wash stock baggy jeans">
+                          </div>
+                          <div class="product-info">
+                               <h3 class="product-title">Stock Baggy Jeans</h3>
+                               <p class="product-price">₦25,000.00</p>
+                               <button class="btn btn-primary add-to-cart-btn">Add to Cart</button>
+                          </div>
+                      </div>
+    
+                      <!-- Product 2: Sweatshirt -->
+                      <div class="product-card" data-product-id="na-swt002" data-product-name="Sweatshirt" data-product-price="18000.00" data-product-image="https://images.pexels.com/photos/1183266/pexels-photo-1183266.jpeg?auto=compress&cs=tinysrgb&w=600">
+                           <div class="product-image">
+                              <!-- Updated Image URL -->
+                              <img src="https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8c3dlYXRzaGlydHxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=500&q=60" alt="Comfortable grey crewneck sweatshirt">
+                           </div>
+                           <div class="product-info">
+                              <h3 class="product-title">Sweatshirt</h3>
+                              <p class="product-price">₦18,000.00</p>
+                              <button class="btn btn-primary add-to-cart-btn">Add to Cart</button>
+                          </div>
+                      </div>
+    
+                      <!-- Product 3: Denim Skirt -->
+                      <div class="product-card" data-product-id="na-dsk003" data-product-name="Denim Skirt" data-product-price="15500.00" data-product-image="https://images.pexels.com/photos/1642161/pexels-photo-1642161.jpeg?auto=compress&cs=tinysrgb&w=600">
+                           <div class="product-image">
+                               <!-- Updated Image URL -->
+                              <img src="https://images.pexels.com/photos/1642161/pexels-photo-1642161.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Blue denim mini skirt">
+                           </div>
+                           <div class="product-info">
+                              <h3 class="product-title">Denim Skirt</h3>
+                              <p class="product-price">₦15,500.00</p>
+                              <button class="btn btn-primary add-to-cart-btn">Add to Cart</button>
+                          </div>
+                      </div>
+    
+                      <!-- Product 4: Gown -->
+                      <div class="product-card" data-product-id="na-gwn004" data-product-name="Gown" data-product-price="45000.00" data-product-image="https://images.pexels.com/photos/291762/pexels-photo-291762.jpeg?auto=compress&cs=tinysrgb&w=600">
+                           <div class="product-image">
+                               <!-- Updated Image URL (Replaced Bing link) -->
+                              <img src="https://images.pexels.com/photos/10816045/pexels-photo-10816045.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Elegant evening gown">
+                           </div>
+                           <div class="product-info">
+                              <h3 class="product-title">Gown</h3>
+                              <p class="product-price">₦45,000.00</p>
+                              <button class="btn btn-primary add-to-cart-btn">Add to Cart</button>
+                          </div>
+                      </div>
+    
+                      <!-- Product 5: Bumshorts -->
+                      <div class="product-card" data-product-id="na-bum005" data-product-name="Bumshorts" data-product-price="12000.00" data-product-image="https://images.pexels.com/photos/5935608/pexels-photo-5935608.jpeg?auto=compress&cs=tinysrgb&w=600">
+                           <div class="product-image">
+                              <!-- Updated Image URL -->
+                              <img src="https://images.pexels.com/photos/5935608/pexels-photo-5935608.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Model wearing high-waist denim bumshorts">
+                           </div>
+                           <div class="product-info">
+                              <h3 class="product-title">Bumshorts</h3>
+                              <p class="product-price">₦12,000.00</p>
+                              <button class="btn btn-primary add-to-cart-btn">Add to Cart</button>
+                          </div>
+                      </div>
+    
+                      <!-- Product 6: Unisex Tee Shirt -->
+                      <div class="product-card" data-product-id="na-tee006" data-product-name="Unisex Tee Shirt" data-product-price="10000.00" data-product-image="https://images.pexels.com/photos/428340/pexels-photo-428340.jpeg?auto=compress&cs=tinysrgb&w=600">
+                           <div class="product-image">
+                               <!-- Updated Image URL -->
+                              <img src="https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8dCUyMHNoaXJ0fGVufDB8fDB8fHww&auto=format&fit=crop&w=500&q=60" alt="Plain basic unisex t-shirt">
+                           </div>
+                           <div class="product-info">
+                              <h3 class="product-title">Unisex Tee Shirt</h3>
+                              <p class="product-price">₦10,000.00</p>
+                              <button class="btn btn-primary add-to-cart-btn">Add to Cart</button>
+                           </div>
+                      </div>
+    
+                  </div> <!-- End product-grid -->
+              </div> <!-- End container -->
+          </section>
+      </main>
     <!-- Cart Sidebar -->
     <div class="cart-sidebar" id="cart-sidebar">
       <div class="cart-header">
@@ -164,7 +236,7 @@
             <ul class="contact-info">
               <li>
                 <i class="fas fa-map-marker-alt"></i>
-                <span>Lagos, Nigeria</span>
+                <span>No2 Oluwaloni ilese odomolasa Ijebu ode/Abrokuta Ogun state.</span>
               </li>
               <li>
                 <i class="fas fa-phone"></i>
@@ -172,7 +244,8 @@
               </li>
               <li>
                 <i class="fas fa-envelope"></i>
-                <span>info@denimbydesewa.com</span>
+                <span>
+                  E mail- adesewayusroh@gmail.com</span>
               </li>
             </ul>
           </div>
