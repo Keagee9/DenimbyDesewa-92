@@ -1,111 +1,83 @@
-document.addEventListener('DOMContentLoaded', () => {
-    console.log("New Arrivals Page Script Initializing...");
-  
-    // Corrected ID to match HTML
-    const productGrid = document.getElementById('new-arrivals-list');
-    if (!productGrid) {
-        console.error("Element with ID 'new-arrivals-list' not found. Cannot add cart functionality.");
+document.addEventListener('DOMContentLoaded', () => { // Ensure DOM is loaded
+    const addToCartButtons = document.querySelectorAll('.add-to-cart-btn');
+
+    addToCartButtons.forEach(button => {
+        button.addEventListener('click', handleAddToCartClick);
+    });
+});
+
+function handleAddToCartClick(event) {
+    console.log('Add to Cart button clicked!'); // **DEBUGGING STEP 1**
+    const button = event.target;
+    const productCard = button.closest('.product-card'); // Find the parent product card
+
+    if (!productCard) {
+        console.error("Could not find product card for button:", button);
         return;
     }
-  
-    // --- Cart Interaction Check ---
-    // Ensure the Cart object and its addToCart method are available globally
-    if (typeof Cart === 'undefined' || typeof Cart.addToCart !== 'function') {
-        console.error("Cart object or Cart.addToCart function not found. Make sure cart.js is loaded *before* new-arrivals.js and defines 'window.Cart'.");
-        // Disable buttons or show a message if cart isn't functional
-        productGrid.querySelectorAll('.add-to-cart-btn').forEach(button => {
-            button.disabled = true;
-            button.textContent = 'Cart Unavailable';
-            button.style.backgroundColor = '#ccc'; // Example disabled style
-        });
-        return; // Stop execution if cart isn't available
+
+    // Extract data from the product card's data attributes
+    const productId = productCard.dataset.productId;
+    const productName = productCard.dataset.productName;
+    // Get price correctly (remove currency symbol and convert to number)
+    const priceElement = productCard.querySelector('.product-price');
+    const priceString = priceElement ? priceElement.textContent.trim() : '0'; // e.g., "₦15,000.00"
+    const price = parseFloat(priceString.replace(/[^0-9.]/g, '')); // Remove ₦ and , -> 15000.00
+    const productImage = productCard.dataset.productImage; // Or maybe from the img src itself
+
+     if (!productId || !productName || isNaN(price)) {
+         console.error("Missing product data:", { productId, productName, price, productImage });
+         return;
+     }
+
+    console.log('Product Data:', { id: productId, name: productName, price: price, image: productImage }); // **DEBUGGING STEP 2**
+
+    // --- THIS IS WHERE YOU CALL YOUR CART LOGIC ---
+    // Example: Assuming you have an addToCart function defined elsewhere (e.g., in cart.js)
+     if (typeof addToCart === 'function') {
+         addToCart({
+             id: productId,
+             name: productName,
+             price: price,
+             image: productImage,
+             quantity: 1 // Start with quantity 1
+         });
+     } else {
+         console.error('addToCart function is not defined!');
+     }
+     // --- END CART LOGIC CALL ---
+}
+
+// --- Make sure your actual cart functions are defined ---
+// --- e.g., in cart.js ---
+let cart = []; // Or load from localStorage
+
+function addToCart(product) {
+     console.log('addToCart function called with:', product); // **DEBUGGING STEP 3**
+     // Add logic here to:
+     // 1. Check if product already exists in `cart` array
+     // 2. If yes, increment quantity
+     // 3. If no, add the product object to the `cart` array
+     // 4. Update the cart display (counter, sidebar items, totals)
+     // 5. Optionally save the cart to localStorage
+     updateCartDisplay(); // Example function call
+}
+
+function updateCartDisplay() {
+    console.log('Updating cart display...'); // **DEBUGGING STEP 4**
+    // Add logic here to:
+    // - Update the cart count in the header (#cart-count)
+    // - Render items in the sidebar (#cart-items)
+    // - Calculate and display subtotal/total (#cart-subtotal, #cart-total)
+    // - Show/hide empty cart message vs. cart items/footer
+    const cartCountElement = document.getElementById('cart-count');
+    if(cartCountElement) {
+        // Calculate total quantity from `cart` array
+        const totalQuantity = cart.reduce((sum, item) => sum + item.quantity, 0);
+        cartCountElement.textContent = totalQuantity;
     }
-    // --- End Cart Interaction Check ---
-  
-    // Use event delegation on the grid container
-    productGrid.addEventListener('click', (event) => {
-        // Check if the clicked element is an add-to-cart button or inside one
-        const clickedButton = event.target.closest('.add-to-cart-btn');
-  
-        if (clickedButton) {
-            // Find the parent product card to get data attributes
-            const productCard = clickedButton.closest('.product-card');
-            if (!productCard) {
-                console.error("Could not find parent '.product-card' for clicked button.");
-                return; // Should not happen if HTML is correct
-            }
-  
-            // Extract product details from the product card's data attributes
-            const productId = productCard.dataset.productId;
-            const productName = productCard.dataset.productName;
-            const productPriceString = productCard.dataset.productPrice;
-            // Get the image URL expected by cart.js
-            const productImageUrl = productCard.dataset.productImage;
-             // Get category if available, otherwise it will be undefined
-            const productCategory = productCard.dataset.productCategory;
-  
-  
-            // Validate extracted data
-            const productPrice = parseFloat(productPriceString);
-            if (!productId || !productName || isNaN(productPrice) || !productImageUrl) {
-                console.error('Missing or invalid product data on card:', productCard.dataset);
-                // Use the placeholder Toast or alert
-                if(typeof Toast !== 'undefined' && Toast.error) {
-                   Toast.error('Sorry, cannot add item (invalid data).');
-                } else {
-                   alert('Sorry, cannot add item (invalid data).');
-                }
-                return; // Prevent adding incomplete data
-            }
-  
-            // Prepare the product data object (matching structure Cart.addToCart expects)
-            const productData = {
-                id: productId, // Keep ID as string or parse if needed
-                name: productName,
-                price: productPrice,
-                imageUrl: productImageUrl, // Correct key name
-                category: productCategory, // Will be undefined if attribute missing, cart.js handles default
-                // quantity is handled by Cart.addToCart default parameter
-            };
-  
-            console.log('Adding to cart:', productData);
-  
-            // Call the addToCart method on the global Cart object
-            try {
-                Cart.addToCart(productData); // <-- Corrected function call
-  
-                // --- Visual Feedback (Optional but Recommended) ---
-                clickedButton.textContent = 'Added!';
-                clickedButton.disabled = true;
-                // Use CSS variable for success color from main.css
-                clickedButton.style.backgroundColor = 'var(--success-color, #4caf50)'; // Fallback color
-                clickedButton.style.borderColor = 'var(--success-color, #4caf50)'; // Match border
-  
-                setTimeout(() => {
-                    clickedButton.textContent = 'Add to Cart';
-                    clickedButton.disabled = false;
-                    clickedButton.style.backgroundColor = ''; // Revert to CSS default
-                    clickedButton.style.borderColor = ''; // Revert to CSS default
-                }, 1500); // 1.5 seconds
-                // --- End Visual Feedback ---
-  
-            } catch (error) {
-                console.error("Error executing Cart.addToCart function:", error);
-                 if(typeof Toast !== 'undefined' && Toast.error) {
-                    Toast.error('An error occurred adding the item.');
-                } else {
-                   alert('An error occurred adding the item.');
-                }
-            }
-        }
-    });
-  
-    console.log("Event listener attached to product grid for Add to Cart buttons.");
-  
-     // Add current year to footer (if not already handled elsewhere)
-      const currentYearSpan = document.getElementById('current-year');
-      if (currentYearSpan && !currentYearSpan.textContent.includes(new Date().getFullYear())) {
-          currentYearSpan.textContent = new Date().getFullYear();
-      }
-  
-  }); // End DOMContentLoaded
+     // ... more display logic ...
+}
+
+// Add functions to handle quantity changes, removal, clearing cart, etc.
+// Add functions to load cart from localStorage on page load.

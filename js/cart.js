@@ -1,426 +1,347 @@
-// Cart management for Denim by Desewa website
-
-// --- START: Added Helper Functions ---
-
-/**
- * Formats a number as Nigerian Naira currency.
- * @param {number} amount - The amount to format.
- * @returns {string} Formatted currency string (e.g., "₦1,234.56").
- */
-function formatCurrency(amount) {
-  if (typeof amount !== 'number') {
-    amount = 0; // Default to 0 if not a number
-  }
-  const formatter = new Intl.NumberFormat('en-NG', {
-    style: 'currency',
-    currency: 'NGN',
-    minimumFractionDigits: 2,
-  });
-  // Return the standard format which includes NGN for clarity,
-  // or use .replace('NGN', '₦') if you strictly want only the symbol.
-  return formatter.format(amount);
-}
-
-/**
- * Placeholder for a Toast notification system.
- * Replace with your actual toast library (e.g., Toastify, Notyf).
- */
-const Toast = {
-  success: (message) => {
-    console.log('Toast Success:', message);
-    alert(`SUCCESS: ${message}`); // Simple alert placeholder
-  },
-  info: (message) => {
-    console.log('Toast Info:', message);
-    alert(`INFO: ${message}`); // Simple alert placeholder
-  },
-  error: (message) => {
-    console.error('Toast Error:', message);
-    alert(`ERROR: ${message}`); // Simple alert placeholder
-  },
-};
-// --- END: Added Helper Functions ---
-
-
-// Cart state management
-const Cart = {
-  // Initial cart state
-  state: {
-    items: [],
-    isOpen: false
-  },
-
-  // Initialize cart from localStorage
-  init() {
-    this.loadCart();
-    this.setupEventListeners();
-    this.updateCartDisplay();
-  },
-
-  // Load cart from localStorage
-  loadCart() {
-    const savedCart = localStorage.getItem('denimCart');
-    if (savedCart) {
-      try {
-        // Basic validation: ensure it's an object with 'items' array
-        const parsed = JSON.parse(savedCart);
-        if (parsed && typeof parsed === 'object' && Array.isArray(parsed.items)) {
-           this.state = parsed;
-           // Ensure isOpen is always false on initial load
-           this.state.isOpen = false;
-        } else {
-           throw new Error("Invalid cart structure in localStorage");
-        }
-      } catch (e) {
-        console.error('Error loading or validating cart from localStorage:', e);
-        // Reset to default state if loading fails
-        this.state = { items: [], isOpen: false };
-        localStorage.removeItem('denimCart'); // Clear corrupted data
-      }
-    } else {
-       // Initialize if no cart exists
-       this.state = { items: [], isOpen: false };
-    }
-  },
-
-  // Save cart to localStorage
-  saveCart() {
-    try {
-       localStorage.setItem('denimCart', JSON.stringify(this.state));
-    } catch (e) {
-       console.error("Error saving cart to localStorage:", e);
-       // Handle potential storage full errors if necessary
-    }
-    this.updateCartDisplay(); // Update display AFTER saving
-  },
-
-  // Add item to cart
-  addToCart(product, quantity = 1) {
-     // Basic validation for the product object
-    if (!product || typeof product !== 'object' || !product.id || !product.name || typeof product.price !== 'number') {
-        console.error("Invalid product data passed to addToCart:", product);
-        Toast.error("Could not add item: Invalid product data.");
-        return;
-    }
-
-    const existingItemIndex = this.state.items.findIndex(item => item.id === product.id);
-
-    if (existingItemIndex !== -1) {
-      // Update quantity if item exists
-      this.state.items[existingItemIndex].quantity += quantity;
-    } else {
-      // Add new item
-      // Ensure all expected properties are included
-      this.state.items.push({
-        id: product.id,
-        name: product.name,
-        price: product.price,
-        // Use product.imageUrl IF PROVIDED, otherwise use a fallback/placeholder
-        imageUrl: product.imageUrl || 'img/placeholder_product.png', // Add a default placeholder path if needed
-        category: product.category || 'Uncategorized', // Use provided category or default
-        quantity
-      });
-    }
-
-    // Save and show cart
-    this.saveCart();
-    this.openCart();
-
-    // Show toast notification
-    Toast.success(`${product.name} added to cart`);
-  },
-
-  // Remove item from cart
-  removeFromCart(id) {
-    const itemToRemove = this.state.items.find(item => item.id === id);
-    this.state.items = this.state.items.filter(item => item.id !== id);
-    this.saveCart();
-    // Add feedback only if an item was actually removed
-    if (itemToRemove) {
-       Toast.info(`${itemToRemove.name} removed from cart`);
-    }
-  },
-
-  // Update item quantity
-  updateQuantity(id, quantity) {
-    const itemIndex = this.state.items.findIndex(item => item.id === id);
-    if (itemIndex !== -1) {
-        // Ensure quantity is at least 1
-       const newQuantity = Math.max(1, quantity);
-       if (this.state.items[itemIndex].quantity !== newQuantity) {
-            this.state.items[itemIndex].quantity = newQuantity;
-            this.saveCart(); // Save only if quantity actually changed
-       } else {
-           // If quantity didn't change (e.g., tried to go below 1),
-           // still call updateCartDisplay to ensure input field resets visually
-           this.updateCartDisplay();
-       }
-    }
-  },
-
-  // Clear all items from cart
-  clearCart() {
-    if (this.state.items.length > 0) { // Only clear and show toast if not already empty
-        this.state.items = [];
-        this.saveCart();
-        Toast.info('Cart cleared');
-    }
-  },
-
-  // Toggle cart open/closed
-  toggleCart(forceState) {
-    this.state.isOpen = forceState !== undefined ? forceState : !this.state.isOpen;
-    // NOTE: We DON'T save state.isOpen to localStorage here,
-    // as the cart should always be closed on page load.
-
-    // Update DOM elements
-    const cartSidebar = document.getElementById('cart-sidebar');
-    const cartOverlay = document.getElementById('cart-overlay');
-
-    if (cartSidebar && cartOverlay) { // Check if elements exist
-        if (this.state.isOpen) {
-            cartSidebar.classList.add('active');
-            cartOverlay.classList.add('active');
-            document.body.style.overflow = 'hidden'; // Prevent background scroll
-        } else {
-            cartSidebar.classList.remove('active');
-            cartOverlay.classList.remove('active');
-            document.body.style.overflow = ''; // Restore background scroll
-        }
-    } else {
-        console.error("Cart sidebar or overlay element not found.");
-    }
-  },
-
-  // Open cart
-  openCart() {
-    this.toggleCart(true);
-  },
-
-  // Close cart
-  closeCart() {
-    this.toggleCart(false);
-  },
-
-  // Calculate cart totals
-  getCartTotals() {
-    const subtotal = this.state.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-    // Add tax, shipping calculations here if needed
-    const total = subtotal; // For now, total equals subtotal
-    return {
-      subtotal,
-      total
-    };
-  },
-
-  // Update cart count badge and items
-  updateCartDisplay() {
-    // Update cart count badge
-    const cartCount = document.getElementById('cart-count');
-    if (cartCount) {
-      const itemCount = this.state.items.reduce((sum, item) => sum + item.quantity, 0);
-      cartCount.textContent = itemCount;
-      cartCount.style.display = itemCount > 0 ? 'flex' : 'none';
-    }
-
-    // Update cart items container
-    const cartItemsContainer = document.getElementById('cart-items');
-    const cartEmpty = document.getElementById('cart-empty');
-    const cartFooter = document.getElementById('cart-footer');
-
-    if (cartItemsContainer && cartEmpty && cartFooter) {
-      if (this.state.items.length === 0) {
-        cartItemsContainer.innerHTML = ''; // Clear items
-        cartEmpty.style.display = 'flex'; // Show empty message
-        cartFooter.style.display = 'none'; // Hide footer
-      } else {
-        cartEmpty.style.display = 'none'; // Hide empty message
-        cartFooter.style.display = 'block'; // Show footer
-
-        // Render cart items using the formatCurrency function
-        cartItemsContainer.innerHTML = this.state.items.map(item => `
-          <div class="cart-item" data-id="${item.id}">
-            <div class="cart-item-image">
-              <img src="${item.imageUrl || 'img/placeholder_product.png'}" alt="${item.name || 'Product'}">
-            </div>
-            <div class="cart-item-content">
-              <h4 class="cart-item-title">${item.name || 'Unnamed Product'}</h4>
-              ${item.category ? `<div class="cart-item-category">Category: ${item.category}</div>` : ''}
-              <div class="cart-item-price">
-                ${formatCurrency(item.price * item.quantity)}
-                ${item.quantity > 1 ? `<span class="unit-price">(${formatCurrency(item.price)} each)</span>` : ''}
-              </div>
-              <div class="cart-item-actions">
-                <div class="cart-item-quantity">
-                  <button class="quantity-btn quantity-decrease" aria-label="Decrease quantity">-</button>
-                  <input type="number" class="quantity-input" value="${item.quantity}" min="1" aria-label="Quantity">
-                  <button class="quantity-btn quantity-increase" aria-label="Increase quantity">+</button>
-                </div>
-                <button class="remove-item" aria-label="Remove item">
-                  <i class="fas fa-trash"></i>
-                </button>
-              </div>
-            </div>
-          </div>
-        `).join('');
-
-        // Update totals
-        const totals = this.getCartTotals();
-        const cartSubtotalEl = document.getElementById('cart-subtotal');
-        const cartTotalEl = document.getElementById('cart-total');
-        if (cartSubtotalEl) cartSubtotalEl.textContent = formatCurrency(totals.subtotal);
-        if (cartTotalEl) cartTotalEl.textContent = formatCurrency(totals.total);
-
-        // Add event listeners AFTER rendering items
-        this.addCartItemEventListeners();
-      }
-    } else {
-        console.error("One or more cart display elements not found (cart-items, cart-empty, cart-footer).");
-    }
-  },
-
-  // Setup event listeners for general cart controls
-  setupEventListeners() {
-    // Use event delegation for dynamically added elements where possible
-    const cartBtn = document.getElementById('cart-btn');
-    if (cartBtn) cartBtn.addEventListener('click', () => this.openCart());
-
-    const closeCartBtn = document.getElementById('close-cart');
-    if (closeCartBtn) closeCartBtn.addEventListener('click', () => this.closeCart());
-
-    const cartOverlay = document.getElementById('cart-overlay');
-    if (cartOverlay) cartOverlay.addEventListener('click', () => this.closeCart());
-
-    // Continue shopping buttons (using querySelectorAll)
-    document.querySelectorAll('#continue-shopping, #continue-shopping-footer').forEach(btn => {
-      if(btn) btn.addEventListener('click', () => this.closeCart());
-    });
-
-    // Clear cart button
-    const clearCartBtn = document.getElementById('clear-cart');
-    if (clearCartBtn) {
-      clearCartBtn.addEventListener('click', () => {
-        // Add confirmation dialog
-        if (this.state.items.length > 0 && confirm('Are you sure you want to clear your cart?')) {
-          this.clearCart();
-        }
-      });
-    }
-
-     // Add listener for checkout button if needed
-     const checkoutBtn = document.querySelector('.checkout-btn');
-     if (checkoutBtn) {
-         checkoutBtn.addEventListener('click', () => {
-             if (this.state.items.length > 0) {
-                 alert(`Proceeding to checkout with ${this.state.items.length} items. Total: ${formatCurrency(this.getCartTotals().total)} (Demo - No actual checkout)`);
-                 // Add actual checkout logic here (e.g., redirect to checkout page)
-             } else {
-                 alert("Your cart is empty.");
-             }
-         });
-     }
-  },
-
-  // Add event listeners specifically for controls within cart items
-  addCartItemEventListeners() {
-    const cartItemsContainer = document.getElementById('cart-items');
-    if (!cartItemsContainer) return; // Exit if container not found
-
-    // Use event delegation on the container for item controls
-    cartItemsContainer.addEventListener('click', (event) => {
-      const target = event.target;
-      const cartItemElement = target.closest('.cart-item');
-      if (!cartItemElement) return; // Click wasn't inside a cart item
-
-      const id = cartItemElement.dataset.id; // Get ID from parent item
-       // Ensure ID is treated consistently (e.g., as string if product IDs are strings)
-       // If product IDs are numbers, parse it: const id = parseInt(cartItemElement.dataset.id);
-
-
-      if (target.classList.contains('quantity-decrease') || target.closest('.quantity-decrease')) {
-          const item = this.state.items.find(i => i.id === id);
-          if (item) {
-             this.updateQuantity(id, item.quantity - 1);
-          }
-      } else if (target.classList.contains('quantity-increase') || target.closest('.quantity-increase')) {
-          const item = this.state.items.find(i => i.id === id);
-          if (item) {
-             this.updateQuantity(id, item.quantity + 1);
-          }
-      } else if (target.classList.contains('remove-item') || target.closest('.remove-item')) {
-          this.removeFromCart(id);
-      }
-    });
-
-     // Add separate listeners for quantity input changes (blur or enter key)
-     cartItemsContainer.querySelectorAll('.quantity-input').forEach(input => {
-         input.addEventListener('change', (event) => { // 'change' fires on blur or Enter
-             const cartItemElement = event.target.closest('.cart-item');
-             if (!cartItemElement) return;
-             const id = cartItemElement.dataset.id;
-             const newQuantity = parseInt(event.target.value);
-
-             if (!isNaN(newQuantity)) {
-                 this.updateQuantity(id, newQuantity); // updateQuantity handles clamping to min 1
-             } else {
-                 // If input is invalid, revert display
-                 this.updateCartDisplay();
-             }
-         });
-     });
-  }
-};
-
-// Initialize cart when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-  Cart.init();
-});
+  // --- Constants ---
+  const WHATSAPP_NUMBER = '2349033221858'; // Your WhatsApp number
 
-// Make Cart available globally for other scripts (like new-arrivals.js)
-window.Cart = Cart;
+  // --- DOM Elements ---
+  const addToCartButtons = document.querySelectorAll('.add-to-cart-btn');
+  const cartBtn = document.getElementById('cart-btn');
+  const closeCartBtn = document.getElementById('close-cart');
+  const cartSidebar = document.getElementById('cart-sidebar');
+  const cartOverlay = document.getElementById('cart-overlay');
+  const cartItemsContainer = document.getElementById('cart-items');
+  const cartCountElement = document.getElementById('cart-count');
+  const cartSubtotalElement = document.getElementById('cart-subtotal');
+  const cartTotalElement = document.getElementById('cart-total');
+  const cartEmptyMessage = document.getElementById('cart-empty');
+  const cartFooter = document.getElementById('cart-footer');
+  const clearCartBtn = document.getElementById('clear-cart');
+  const checkoutBtn = document.querySelector('.checkout-btn'); // Select the checkout button
+  const continueShoppingBtns = [
+      document.getElementById('continue-shopping'),
+      document.getElementById('continue-shopping-footer')
+  ].filter(btn => btn);
+
+  // --- Cart State ---
+  let cartItems = loadCart(); // Load cart from localStorage or initialize as empty array
+
+  // --- Initialization ---
+  updateCartUI(); // Initial UI update based on loaded cart
+  setupEventListeners(); // Attach all event listeners
+
+  // --- Event Listeners Setup ---
+  function setupEventListeners() {
+      // Add to Cart Buttons
+      addToCartButtons.forEach(button => {
+          button.addEventListener('click', handleAddToCartClick);
+      });
+
+      // Open Cart Sidebar
+      if (cartBtn) {
+          cartBtn.addEventListener('click', openCartSidebar);
+      }
+
+      // Close Cart Sidebar
+      if (closeCartBtn) {
+          closeCartBtn.addEventListener('click', closeCartSidebar);
+      }
+      if (cartOverlay) {
+          cartOverlay.addEventListener('click', closeCartSidebar);
+      }
+      continueShoppingBtns.forEach(btn => btn.addEventListener('click', closeCartSidebar));
 
 
-// --- COMMENTED OUT - This section is for dynamic product loading, not needed for static new-arrivals.html ---
-/*
-// Add to cart functionality for product buttons (if using dynamic product loading)
-function setupAddToCartButtons() {
-  document.querySelectorAll('.add-to-cart-btn').forEach(btn => {
-    btn.addEventListener('click', e => {
-      e.preventDefault();
+      // Actions within the cart (using event delegation)
+      if (cartItemsContainer) {
+          cartItemsContainer.addEventListener('click', handleCartItemActions);
+      }
 
-      const productId = parseInt(btn.dataset.productId);
-      const quantity = parseInt(btn.dataset.quantity || 1);
+      // Clear Cart
+      if (clearCartBtn) {
+          clearCartBtn.addEventListener('click', () => {
+              if (confirm('Are you sure you want to clear your cart?')) {
+                  clearCart();
+              }
+          });
+      }
 
-      // Fetch product data (Requires an API object/function)
-      // Example:
-      // API.getProduct(productId)
-      //   .then(product => {
-      //     if (product) {
-      //       Cart.addToCart(product, quantity);
-      //     }
-      //   })
-      //   .catch(error => {
-      //     Toast.error('Error adding product to cart');
-      //     console.error('Error adding to cart:', error);
-      //   });
+      // *** NEW: Checkout Button Listener ***
+      if (checkoutBtn) {
+          checkoutBtn.addEventListener('click', handleCheckoutClick);
+      }
+      // *** END NEW ***
+  }
 
-      console.warn("setupAddToCartButtons called, but API.getProduct is not defined. This function is intended for dynamic product loading.");
-      Toast.error("Cannot add item dynamically - Feature not implemented.");
-    });
-  });
-}
-// Expose if needed for dynamic pages, but not for new-arrivals.html
-// window.setupAddToCartButtons = setupAddToCartButtons;
-*/
-// --- END COMMENTED OUT SECTION ---
+  // --- Event Handlers ---
+  function handleAddToCartClick(event) {
+      const button = event.target;
+      const productCard = button.closest('.product-card');
 
-// Inside cart.js, within the Cart object:
-init() {
-  console.log("Cart.init starting..."); // Add log
-  this.loadCart();
-  console.log("Cart.init after loadCart."); // Add log
-  this.setupEventListeners();
-  console.log("Cart.init after setupEventListeners."); // Add log
-  this.updateCartDisplay();
-  console.log("Cart.init finished."); // Add log
-},
+      if (!productCard) {
+          console.error("Could not find product card for button:", button);
+          return;
+      }
+
+      // Extract product data
+      const productId = productCard.dataset.productId;
+      const productName = productCard.dataset.productName;
+      const productImage = productCard.dataset.productImage || productCard.querySelector('img')?.src; // Fallback to img src
+      const priceElement = productCard.querySelector('.product-price');
+      const priceString = priceElement ? priceElement.textContent.trim() : '0';
+      const price = parseFloat(priceString.replace(/[^0-9.]/g, '')); // Remove currency symbols and commas
+
+      if (!productId || !productName || isNaN(price)) {
+          console.error("Missing or invalid product data:", { productId, productName, price, productImage });
+          alert("Sorry, there was an issue adding this item.");
+          return;
+      }
+
+      const productToAdd = {
+          id: productId,
+          name: productName,
+          price: price,
+          image: productImage || 'image/placeholder.png' // Provide a default image if none found
+      };
+
+      addItemToCart(productToAdd);
+      openCartSidebar(); // Optionally open cart when item is added
+      // Provide visual feedback (optional)
+      button.textContent = 'Added!';
+      button.disabled = true;
+      setTimeout(() => {
+           button.textContent = 'Add to Cart';
+           button.disabled = false;
+      }, 1500);
+  }
+
+  function handleCartItemActions(event) {
+      const target = event.target;
+      const cartItemDiv = target.closest('.cart-item');
+      if (!cartItemDiv) return; // Clicked outside an item
+
+      const productId = cartItemDiv.dataset.productId;
+
+      // Remove item
+      if (target.classList.contains('remove-item-btn') || target.closest('.remove-item-btn')) {
+          removeItemFromCart(productId);
+      }
+
+      // Decrease quantity
+      if (target.classList.contains('quantity-decrease') || target.closest('.quantity-decrease')) {
+          updateQuantity(productId, -1);
+      }
+
+      // Increase quantity
+      if (target.classList.contains('quantity-increase') || target.closest('.quantity-increase')) {
+           updateQuantity(productId, 1);
+      }
+  }
+
+  // *** NEW: WhatsApp Checkout Handler ***
+  function handleCheckoutClick() {
+      if (cartItems.length === 0) {
+          alert("Your cart is empty. Please add items before checking out.");
+          return; // Don't proceed if cart is empty
+      }
+
+      // 1. Format the message
+      let message = "Hello Denim by Desewa!\n\nI would like to place an order for the following items:\n\n";
+
+      cartItems.forEach(item => {
+          // Include item name and quantity. Optionally include price per item.
+          message += `- ${item.name} x ${item.quantity}\n`;
+          // Example including price:
+          // message += `- ${item.name} x ${item.quantity} (${formatCurrency(item.price)} each)\n`;
+      });
+
+      // 2. Add the total
+      const { total } = calculateTotals();
+      message += `\nTotal Order Value: ${formatCurrency(total)}`;
+
+      // 3. Add closing message (optional)
+      message += "\n\nPlease confirm availability and provide payment details.";
+
+      // 4. URL-encode the message for the link
+      const encodedMessage = encodeURIComponent(message);
+
+      // 5. Construct the WhatsApp URL
+      // Note: Using https://wa.me/ is generally preferred
+      const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodedMessage}`;
+
+      // 6. Open the URL in a new tab
+      window.open(whatsappUrl, '_blank');
+
+      // 7. Optional: Clear cart after sending to WhatsApp?
+      // if (confirm("Your order details have been sent to WhatsApp. Clear your cart now?")) {
+      //     clearCart();
+      // }
+  }
+  // *** END NEW ***
+
+
+  // --- Cart Logic Functions ---
+  function addItemToCart(product) {
+      const existingItemIndex = cartItems.findIndex(item => item.id === product.id);
+
+      if (existingItemIndex > -1) {
+          cartItems[existingItemIndex].quantity += 1;
+      } else {
+          cartItems.push({ ...product, quantity: 1 });
+      }
+
+      saveCart();
+      updateCartUI();
+  }
+
+  function removeItemFromCart(productId) {
+      cartItems = cartItems.filter(item => item.id !== productId);
+      saveCart();
+      updateCartUI();
+  }
+
+  function updateQuantity(productId, change) {
+       const itemIndex = cartItems.findIndex(item => item.id === productId);
+       if (itemIndex > -1) {
+           cartItems[itemIndex].quantity += change;
+           if (cartItems[itemIndex].quantity <= 0) {
+               removeItemFromCart(productId);
+           } else {
+               saveCart();
+               updateCartUI();
+           }
+       }
+  }
+
+  function clearCart() {
+      cartItems = [];
+      saveCart();
+      updateCartUI();
+      // Keep the cart sidebar open or close it? Decide based on UX preference.
+      // closeCartSidebar();
+  }
+
+  function calculateTotals() {
+      const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+      const total = subtotal;
+      return { subtotal, total };
+  }
+
+  // --- UI Update Functions ---
+  function updateCartUI() {
+      renderCartItems();
+      updateCartTotals();
+      updateCartCount();
+      toggleEmptyCartMessage();
+      // *** NEW: Enable/disable checkout button based on cart state ***
+      if (checkoutBtn) {
+          checkoutBtn.disabled = cartItems.length === 0;
+      }
+      // *** END NEW ***
+  }
+
+  function renderCartItems() {
+      if (!cartItemsContainer) return;
+      cartItemsContainer.innerHTML = '';
+      if (cartItems.length === 0) return;
+
+      cartItems.forEach(item => {
+          const itemElement = document.createElement('div');
+          itemElement.classList.add('cart-item');
+          itemElement.dataset.productId = item.id;
+
+          const formattedPrice = formatCurrency(item.price);
+          const formattedLineTotal = formatCurrency(item.price * item.quantity);
+
+          itemElement.innerHTML = `
+              <img src="${item.image}" alt="${item.name}" class="cart-item-image">
+              <div class="cart-item-details">
+                  <h4 class="cart-item-title">${item.name}</h4>
+                  <p class="cart-item-price">${formattedPrice}</p>
+                  <div class="cart-item-quantity">
+                      <button class="quantity-btn quantity-decrease" aria-label="Decrease quantity">-</button>
+                      <span class="quantity-value">${item.quantity}</span>
+                      <button class="quantity-btn quantity-increase" aria-label="Increase quantity">+</button>
+                  </div>
+              </div>
+              <div class="cart-item-subtotal">
+                  <span>${formattedLineTotal}</span>
+                  <button class="remove-item-btn" aria-label="Remove item">
+                      <i class="fas fa-trash-alt"></i>
+                  </button>
+              </div>
+          `;
+          cartItemsContainer.appendChild(itemElement);
+      });
+  }
+
+  function updateCartTotals() {
+      const { subtotal, total } = calculateTotals();
+      if (cartSubtotalElement) {
+          cartSubtotalElement.textContent = formatCurrency(subtotal);
+      }
+      if (cartTotalElement) {
+          cartTotalElement.textContent = formatCurrency(total);
+      }
+  }
+
+  function updateCartCount() {
+      if (!cartCountElement) return;
+      const totalQuantity = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+      cartCountElement.textContent = totalQuantity;
+      cartCountElement.style.display = totalQuantity > 0 ? 'flex' : 'none';
+  }
+
+  function toggleEmptyCartMessage() {
+      const isEmpty = cartItems.length === 0;
+      if (cartEmptyMessage) {
+          cartEmptyMessage.style.display = isEmpty ? 'flex' : 'none';
+      }
+      if (cartItemsContainer) {
+           cartItemsContainer.style.display = isEmpty ? 'none' : 'block';
+      }
+      if (cartFooter) {
+          cartFooter.style.display = isEmpty ? 'none' : 'block';
+      }
+  }
+
+  function openCartSidebar() {
+      if (cartSidebar) cartSidebar.classList.add('active');
+      if (cartOverlay) cartOverlay.classList.add('active');
+      document.body.style.overflow = 'hidden';
+  }
+
+  function closeCartSidebar() {
+      if (cartSidebar) cartSidebar.classList.remove('active');
+      if (cartOverlay) cartOverlay.classList.remove('active');
+      document.body.style.overflow = '';
+  }
+
+  // --- Local Storage Functions ---
+  function saveCart() {
+      try {
+          localStorage.setItem('shoppingCart', JSON.stringify(cartItems));
+      } catch (e) {
+          console.error("Could not save cart to localStorage:", e);
+      }
+  }
+
+  function loadCart() {
+      try {
+          const savedCart = localStorage.getItem('shoppingCart');
+          return savedCart ? JSON.parse(savedCart) : [];
+      } catch (e) {
+          console.error("Could not load cart from localStorage:", e);
+          localStorage.removeItem('shoppingCart');
+          return [];
+      }
+  }
+
+  // --- Utility Functions ---
+  function formatCurrency(amount) {
+      return new Intl.NumberFormat('en-NG', {
+          style: 'currency',
+          currency: 'NGN',
+          minimumFractionDigits: 2
+      }).format(amount);
+  }
+
+}); // End DOMContentLoaded
